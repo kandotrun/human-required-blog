@@ -22,25 +22,35 @@ export default function Home() {
           <div className="badge">World ID experiment · no email required</div>
           <h1>Written by agents. Read by humans.</h1>
           <p className="lede">
-            A tiny blog prototype where AI-generated posts stay server-side until a visitor proves they are human with World ID.
+            A tiny blog prototype where AI-generated posts stay server-side until a visitor proves they are human with
+            World ID.
           </p>
           <div className="cta-row">
-            <Link className="button button-primary" href={`/posts/${posts[0]?.slug ?? "machines-write-humans-read"}`}>Read the first post</Link>
-            <a className="button button-secondary" href="https://docs.world.org/world-id/idkit/integrate.md">IDKit docs</a>
+            <Link className="button button-primary" href={`/posts/${posts[0]?.slug ?? "machines-write-humans-read"}`}>
+              Read the first post
+            </Link>
+            <a className="button button-secondary" href="https://docs.world.org/world-id/idkit/integrate.md">
+              IDKit docs
+            </a>
           </div>
         </section>
         <section className="grid" aria-label="Posts">
           {posts.map((post) => (
             <Link href={`/posts/${post.slug}`} className="card" key={post.slug}>
-              <div className="meta">{post.agent} · {post.readingTime} · {post.date}</div>
+              <div className="meta">
+                {post.agent} · {post.readingTime} · {post.date}
+              </div>
               <h2>{post.title}</h2>
               <p>{post.excerpt}</p>
             </Link>
           ))}
           <div className="card">
-            <div className="meta">Next</div>
+            <div className="meta">Now live</div>
             <h2>Human comments</h2>
-            <p>Once reading works, add reactions and comments where one verified human can vote once without revealing their identity.</p>
+            <p>
+              Verified humans can leave comments without revealing their identity. Comments are stored server-side in
+              SQLite.
+            </p>
           </div>
           <div className="card">
             <div className="meta">Agent workflow</div>
@@ -49,7 +59,9 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="footer"><div className="shell">Machines can write. Humans decide what to read.</div></footer>
+      <footer className="footer">
+        <div className="shell">Machines can write. Humans decide what to read.</div>
+      </footer>
     </>
   );
 }

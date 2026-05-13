@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME, HUMAN_ACTION, SESSION_MAX_AGE_SECONDS, getWorldConfig } from "@/lib/world-id";
 import { createHumanSessionToken, getSessionSecret } from "@/lib/session";
+import { COOKIE_NAME, getWorldConfig, HUMAN_ACTION, SESSION_MAX_AGE_SECONDS } from "@/lib/world-id";
 
 type VerifyBody = {
   idkitResponse?: unknown;
@@ -9,7 +9,13 @@ type VerifyBody = {
 };
 
 function extractNullifier(payload: any) {
-  return payload?.nullifier_hash || payload?.nullifier || payload?.responses?.[0]?.nullifier || payload?.responses?.[0]?.nullifier_hash || "verified-human";
+  return (
+    payload?.nullifier_hash ||
+    payload?.nullifier ||
+    payload?.responses?.[0]?.nullifier ||
+    payload?.responses?.[0]?.nullifier_hash ||
+    ""
+  );
 }
 
 export async function POST(request: Request) {
@@ -41,6 +47,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: verifyJson }, { status: 400 });
     }
     nullifierHash = extractNullifier(verifyJson) || extractNullifier(body.idkitResponse);
+    if (!nullifierHash) {
+      return NextResponse.json(
+        { ok: false, error: "World ID verification did not return a nullifier" },
+        { status: 400 },
+      );
+    }
   }
 
   const token = createHumanSessionToken({

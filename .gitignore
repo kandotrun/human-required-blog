@@ -5,3 +5,6 @@ out/
 tsconfig.tsbuildinfo
 .DS_Store
 coverage/
+data/*.sqlite
+data/*.sqlite-*
+data/comments.json

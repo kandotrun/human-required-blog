@@ -1,4 +1,4 @@
-import { createHmac, randomUUID, timingSafeEqual } from "crypto";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 
 export type HumanSessionPayload = {
   human: true;
@@ -45,7 +45,10 @@ export function createHumanSessionToken({
   return `${body}.${sign(body, secret)}`;
 }
 
-export function verifyHumanSessionToken(token: string | undefined, { secret, now = Math.floor(Date.now() / 1000) }: VerifyOptions) {
+export function verifyHumanSessionToken(
+  token: string | undefined,
+  { secret, now = Math.floor(Date.now() / 1000) }: VerifyOptions,
+) {
   if (!token || !secret) return null;
   const [body, signature] = token.split(".");
   if (!body || !signature) return null;
@@ -67,5 +70,10 @@ export function verifyHumanSessionToken(token: string | undefined, { secret, now
 }
 
 export function getSessionSecret() {
-  return process.env.HUMAN_SESSION_SECRET || "dev-only-change-me-human-required-blog-secret";
+  const secret = process.env.HUMAN_SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("HUMAN_SESSION_SECRET is required in production");
+  }
+  return "dev-only-change-me-human-required-blog-secret";
 }

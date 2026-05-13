@@ -1,27 +1,40 @@
 {
   "name": "human-required-blog",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "biome:check": "biome check ."
   },
   "dependencies": {
-    "@worldcoin/idkit": "latest",
-    "gray-matter": "latest",
-    "marked": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "@worldcoin/idkit": "4.1.5",
+    "better-sqlite3": "12.10.0",
+    "gray-matter": "4.0.3",
+    "marked": "18.0.3",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sanitize-html": "2.17.3"
   },
   "devDependencies": {
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "typescript": "latest",
-    "vitest": "latest"
+    "@biomejs/biome": "^2.4.15",
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "25.7.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@types/sanitize-html": "2.16.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  },
+  "description": "A World ID-gated blog prototype where AI-written posts are readable only by verified humans.",
+  "license": "MIT",
+  "overrides": {
+    "postcss": "8.5.10"
   }
 }

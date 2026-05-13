@@ -1,8 +1,12 @@
-import { describe, expect, it } from "vitest";
-import { createHumanSessionToken, verifyHumanSessionToken } from "../lib/session";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { createHumanSessionToken, getSessionSecret, verifyHumanSessionToken } from "../lib/session";
 
 describe("human session tokens", () => {
   const secret = "test-secret-at-least-32-bytes-long";
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
 
   it("accepts a token signed with the configured secret", () => {
     const token = createHumanSessionToken({
@@ -42,5 +46,12 @@ describe("human session tokens", () => {
     });
 
     expect(verifyHumanSessionToken(token, { secret, now: 1_700_000_011 })).toBeNull();
+  });
+
+  it("fails closed when HUMAN_SESSION_SECRET is missing in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("HUMAN_SESSION_SECRET", "");
+
+    expect(() => getSessionSecret()).toThrow(/HUMAN_SESSION_SECRET/);
   });
 });

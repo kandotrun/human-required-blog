@@ -1,16 +1,17 @@
 "use client";
 
+import { IDKitRequestWidget, type IDKitResult, orbLegacy, type RpContext } from "@worldcoin/idkit";
 import { useEffect, useState } from "react";
-import { IDKitRequestWidget, orbLegacy, type IDKitResult, type RpContext } from "@worldcoin/idkit";
 
 type Props = {
   appId?: `app_${string}`;
   action: string;
   configured: boolean;
   devBypass: boolean;
+  environment: "production" | "staging";
 };
 
-export function HumanVerifyButton({ appId, action, configured, devBypass }: Props) {
+export function HumanVerifyButton({ appId, action, configured, devBypass, environment }: Props) {
   const [open, setOpen] = useState(false);
   const [rpContext, setRpContext] = useState<RpContext | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +56,9 @@ export function HumanVerifyButton({ appId, action, configured, devBypass }: Prop
   if (devBypass) {
     return (
       <div>
-        <button className="button button-primary" disabled={loading} onClick={useDevBypass}>{loading ? "Verifying…" : "Dev: verify as human"}</button>
+        <button className="button button-primary" disabled={loading} onClick={useDevBypass} type="button">
+          {loading ? "Verifying…" : "Dev: verify as human"}
+        </button>
         {error ? <div className="error">{error}</div> : null}
       </div>
     );
@@ -64,15 +67,25 @@ export function HumanVerifyButton({ appId, action, configured, devBypass }: Prop
   if (!configured) {
     return (
       <div>
-        <button className="button button-primary" disabled>World ID env vars needed</button>
-        <div className="error">Set NEXT_PUBLIC_WORLD_APP_ID, NEXT_PUBLIC_WORLD_RP_ID, WORLD_RP_ID and WORLD_SIGNING_KEY. For local UI testing set HUMAN_DEV_BYPASS=1.</div>
+        <button className="button button-primary" disabled type="button">
+          World ID env vars needed
+        </button>
+        <div className="error">
+          Set NEXT_PUBLIC_WORLD_APP_ID, NEXT_PUBLIC_WORLD_RP_ID, WORLD_RP_ID and WORLD_SIGNING_KEY. For local UI testing
+          set HUMAN_DEV_BYPASS=1.
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <button className="button button-primary" disabled={!rpContext || !appId} onClick={() => setOpen(true)}>
+      <button
+        className="button button-primary"
+        disabled={!rpContext || !appId}
+        onClick={() => setOpen(true)}
+        type="button"
+      >
         {rpContext ? "Verify with World ID" : "Preparing World ID…"}
       </button>
       {error ? <div className="error">{error}</div> : null}
@@ -85,7 +98,7 @@ export function HumanVerifyButton({ appId, action, configured, devBypass }: Prop
           rp_context={rpContext}
           allow_legacy_proofs={true}
           preset={orbLegacy()}
-          environment="production"
+          environment={environment}
           handleVerify={verifyProof}
           onSuccess={() => window.location.reload()}
           onError={(code) => setError(`World ID error: ${code}`)}

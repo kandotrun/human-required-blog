@@ -1,7 +1,8 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
@@ -52,5 +53,17 @@ export function getPostBySlug(slug: string): FullPost {
 }
 
 export async function renderMarkdownToHtml(markdown: string) {
-  return marked.parse(markdown, { async: true });
+  const rawHtml = await marked.parse(markdown, { async: true });
+  return sanitizeHtml(rawHtml, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      a: ["href", "name", "target", "rel"],
+      img: ["src", "alt", "title"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
+    transformTags: {
+      a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }, true),
+    },
+  });
 }

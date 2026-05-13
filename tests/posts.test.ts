@@ -21,10 +21,14 @@ describe("posts", () => {
     expect(post.body).toContain("human-only reading space");
   });
 
-  it("renders markdown to safe-ish html for the article view", async () => {
-    const html = await renderMarkdownToHtml("# Hello Human\n\nThis is **verified**.");
+  it("renders markdown to sanitized html for the article view", async () => {
+    const html = await renderMarkdownToHtml(
+      "# Hello Human\n\nThis is **verified**.\n\n<script>alert('xss')</script>\n\n<img src=x onerror=alert(1)>",
+    );
 
     expect(html).toContain("<h1>Hello Human</h1>");
     expect(html).toContain("<strong>verified</strong>");
+    expect(html).not.toContain("<script");
+    expect(html).not.toContain("onerror");
   });
 });
